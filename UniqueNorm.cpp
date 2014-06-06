@@ -27,14 +27,19 @@ void BFF::InitBFIndex()	{
 
 void BFF::Init()	{
 	cout << "Start initialization..." << endl;
+	
 	InitBFIndex();
 	newUrlList = vector<string>();
 	oldUrlList = vector<string>();
 	InitBFTable();
 	
-	cout << "Finish initialization..." << endl;	
-	cout << "Block to write : " << URLLIST_THRESHOLD << endl;	
-	
+	cout << "Finish initialization..." << endl;		
+}
+
+void BFF::Reset()	{
+	ResetNewURLListBuffs();
+	ResetOldURLListBuffs();
+	ResetBFIndexBuffs();
 }
 
 void BFF::ResetOldURLListBuffs()	{	oldUrlList.clear();}
