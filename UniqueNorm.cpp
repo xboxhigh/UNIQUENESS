@@ -32,7 +32,8 @@ void BFF::Init()	{
 	oldUrlList = vector<string>();
 	InitBFTable();
 	
-	cout << "Finish initialization..." << endl;
+	cout << "Finish initialization..." << endl;	
+	cout << "Block to write : " << URLLIST_THRESHOLD << endl;	
 	
 }
 
