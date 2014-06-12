@@ -46,9 +46,6 @@ int main(int argc, char **argv)	{
 	//	Get all input file path
 	for (int i = optind; i < argc; i++)	
 		iputPath[i - 1] = argv[i];
-		
-
-	//fin.open(path.c_str(), ios::in);
 	
 	for (int iTimes = 0; iTimes < (argc - 1); iTimes++)	{	
 		cout << "URL uniqueness #" << iTimes << " times start..."<< endl;
