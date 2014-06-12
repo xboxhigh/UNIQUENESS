@@ -67,23 +67,34 @@ int BFF::FalsePositiveCheck()	{
 		forCheckURLFile.open(URLForCheck.c_str(), ios::in);
 		falsePositiveFile.open(fPositive.c_str(), ios::out);
 		char lineOfExist[128*1024], lineOfCheck[128*1024];
-		int o = 0;
-		
+		bool flag = false;
+		int count = 0;	
+		memset(lineOfCheck, ' ', 128*1024);
+		memset(lineOfExist, ' ', 128*1024);
 		while(forCheckURLFile.getline(lineOfCheck, sizeof(lineOfCheck), '\n'))	{
-			o=0;
+
+				
 			existURLFile.clear();
-			existURLFile.seekg(0, ios::beg);
+			existURLFile.seekg(0, existURLFile.beg);
+			
 			while(existURLFile.getline(lineOfExist, sizeof(lineOfExist), '\n'))	{
-				o++;
-				if(strcmp(lineOfCheck, lineOfExist) != 0)	{
-					falsePositive++;
-					falsePositiveFile << lineOfCheck << endl;
+				
+				if(strcmp(lineOfCheck, lineOfExist) == 0)	{
+					flag = true;
+					
 					break;
 				}
 			}
+			
+			if(!flag)	{
+				falsePositive++;
+				falsePositiveFile << lineOfCheck << endl;
+				flag = false;
+				//cout << "False Postive : [" << lineOfCheck << "]" << endl;
+			}
+			
 		}
-		
-		cout << "$$$$$[" << o << "]&&&&" << endl;
+				
 		forCheckURLFile.close();
 		existURLFile.close();
 		falsePositiveFile.close();
@@ -98,15 +109,18 @@ void BFF::MergeSort(string _src, char _type)	{
 	
 	combineCommand = combineCommand + _src + " ";
 
-	if(_type == 'n')
+	if(_type == 'n')	{
 		combineCommand += ("-o " + URLPools);
-	else if (_type == 'c')
+		system(combineCommand.c_str());
+	}
+	else if (_type == 'c')	{
 		combineCommand  += ("-o " + URLForCheck);
+		system(combineCommand.c_str());
+	}
 	else
 		exit(1);
 	
-	system(combineCommand.c_str());
-	system(("rm " + _src).c_str());
+	//system(("rm " + _src).c_str());
 }
 
 void BFF::LinksStorer(string _filePath, vector<string> _link)	{
