@@ -12,7 +12,7 @@
 #include <vector>
 #include <fstream>
 
-#define URLLIST_THRESHOLD 1024*1024*128	//	1 GB
+#define URLLIST_THRESHOLD 1024*1024	//	1 GB
 #define BFTABLE_NUM 13
 #define EACH_TABLE_SIZE 536870911	// (32 bits / 8 bits) => (2^32 / 2^3) 
 
@@ -24,6 +24,7 @@ private:
 	void Init();
 	void InitBFTable();
 	void InitBFIndex();
+	void SetWriteFilePath()	{URLPools = "URLPools"; URLForCheck = "URLForCheck"; existedURL = "existedURL"; fPositive = "falsePositive";}
 	void FlagCalculation();
 	void StrToMD4(const char* _str, int _length);
 	void StrToMD5(const char* _str, int _length);
@@ -32,7 +33,10 @@ private:
 	int SetBFTabelFlag(string _url);
 	
 	unsigned int* BFIndex; 
-	
+	string URLForCheck;
+	string URLPools;
+	string existedURL;
+	string fPositive;
 public:
 	BFF();
 	~BFF()	{}
@@ -42,6 +46,8 @@ public:
 	void ResetOldURLListBuffs();
 	void ResetBFIndexBuffs();
 	void LinksStorer(string _filePath, vector<string> _link);
+	void MergeSort(string _src, char _type);
+	int FalsePositiveCheck();
 	int HexToDec(char _des);
 	int UniquenessURLs(string _url);
 	

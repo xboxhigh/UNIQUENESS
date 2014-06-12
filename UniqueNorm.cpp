@@ -32,6 +32,7 @@ void BFF::Init()	{
 	newUrlList = vector<string>();
 	oldUrlList = vector<string>();
 	InitBFTable();
+	SetWriteFilePath();
 	
 	cout << "Finish initialization..." << endl;		
 }
@@ -46,6 +47,67 @@ void BFF::ResetOldURLListBuffs()	{	oldUrlList.clear();}
 void BFF::ResetNewURLListBuffs()	{	newUrlList.clear();}
 void BFF::ResetBFIndexBuffs()	{	memset(BFIndex, 0, BFTABLE_NUM);}
 	
+int BFF::FalsePositiveCheck()	{
+	int falsePositive = 0;
+	
+	fstream existURLFile, forCheckURLFile, falsePositiveFile;
+	existURLFile.open(existedURL.c_str(), ios::in);
+	
+	if (!existURLFile.is_open())	{
+	
+		cout << "The first time do the uniqueness !" << endl;
+		
+		system(("mv " + URLPools + " " + existedURL).c_str());
+		
+		existURLFile.close();
+		return 0;
+		
+	}	else {
+	
+		forCheckURLFile.open(URLForCheck.c_str(), ios::in);
+		falsePositiveFile.open(fPositive.c_str(), ios::out);
+		char lineOfExist[128*1024], lineOfCheck[128*1024];
+		int o = 0;
+		
+		while(forCheckURLFile.getline(lineOfCheck, sizeof(lineOfCheck), '\n'))	{
+			o=0;
+			existURLFile.clear();
+			existURLFile.seekg(0, ios::beg);
+			while(existURLFile.getline(lineOfExist, sizeof(lineOfExist), '\n'))	{
+				o++;
+				if(strcmp(lineOfCheck, lineOfExist) != 0)	{
+					falsePositive++;
+					falsePositiveFile << lineOfCheck << endl;
+					break;
+				}
+			}
+		}
+		
+		cout << "$$$$$[" << o << "]&&&&" << endl;
+		forCheckURLFile.close();
+		existURLFile.close();
+		falsePositiveFile.close();
+	}
+	
+	return falsePositive;
+}
+
+void BFF::MergeSort(string _src, char _type)	{
+
+	string combineCommand = "./msort ";
+	
+	combineCommand = combineCommand + _src + " ";
+
+	if(_type == 'n')
+		combineCommand += ("-o " + URLPools);
+	else if (_type == 'c')
+		combineCommand  += ("-o " + URLForCheck);
+	else
+		exit(1);
+	
+	system(combineCommand.c_str());
+	system(("rm " + _src).c_str());
+}
 
 void BFF::LinksStorer(string _filePath, vector<string> _link)	{
 	FILE* LinkFile;
