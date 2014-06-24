@@ -12,7 +12,7 @@
 #include <vector>
 #include <fstream>
 
-#define URLLIST_THRESHOLD 1024*1024	//	1 GB
+#define URLLIST_THRESHOLD 1024*1024*1024	//	1 GB
 #define BFTABLE_NUM 13
 #define EACH_TABLE_SIZE 536870911	// (32 bits / 8 bits) => (2^32 / 2^3) 
 

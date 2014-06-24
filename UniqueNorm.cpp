@@ -46,7 +46,8 @@ void BFF::Reset()	{
 void BFF::ResetOldURLListBuffs()	{	oldUrlList.clear();}
 void BFF::ResetNewURLListBuffs()	{	newUrlList.clear();}
 void BFF::ResetBFIndexBuffs()	{	memset(BFIndex, 0, BFTABLE_NUM);}
-	
+
+/*	
 int BFF::FalsePositiveCheck()	{
 	int falsePositive = 0;
 	
@@ -98,6 +99,81 @@ int BFF::FalsePositiveCheck()	{
 		forCheckURLFile.close();
 		existURLFile.close();
 		falsePositiveFile.close();
+	}
+	
+	return falsePositive;
+}
+*/
+
+int BFF::FalsePositiveCheck()	{
+	int falsePositive = 0;
+	
+	fstream existURLFile, forCheckURLFile, falsePositiveFile;
+	existURLFile.open(existedURL.c_str(), ios::in);
+	
+	if (!existURLFile.is_open())	{
+	
+		cout << "The first time do the uniqueness !" << endl;
+		
+		system(("mv " + URLPools + " " + existedURL).c_str());
+		
+		existURLFile.close();
+		return 0;
+		
+	}	else {
+	
+		forCheckURLFile.open(URLForCheck.c_str(), ios::in);
+		falsePositiveFile.open(fPositive.c_str(), ios::out);
+		char lineOfExist[128*1024], lineOfCheck[128*1024];
+		bool flagOfFalsePositive = false, flagOfLineOfCheck = true, flagOfLineOfExist = true;
+		int count = 0;	
+		memset(lineOfCheck, ' ', 128*1024);
+		memset(lineOfExist, ' ', 128*1024);
+		
+		while(true)	{
+			count++;
+			if(flagOfLineOfCheck && flagOfLineOfExist)	{
+				forCheckURLFile.getline(lineOfCheck, sizeof(lineOfCheck), '\n');
+				existURLFile.getline(lineOfExist, sizeof(lineOfExist), '\n');
+				flagOfLineOfCheck = false;
+				flagOfLineOfExist = false;
+			}	else if(flagOfLineOfCheck)	{
+				forCheckURLFile.getline(lineOfCheck, sizeof(lineOfCheck), '\n');
+				flagOfLineOfCheck = false;				
+			}	else if(flagOfLineOfExist)	{
+				existURLFile.getline(lineOfExist, sizeof(lineOfExist), '\n');
+				flagOfLineOfExist = false;				
+			}	
+			
+			
+			
+			if(strcmp(lineOfCheck, lineOfExist) == 0)	{
+				flagOfFalsePositive = true;
+				flagOfLineOfCheck = true;
+				flagOfLineOfExist = true;
+			}	else if (strcmp(lineOfCheck, lineOfExist) < 0)	{
+				flagOfLineOfCheck = true;				
+			}	else if (strcmp(lineOfCheck, lineOfExist) > 0 )	{					
+				flagOfLineOfExist = true;
+			}
+
+			
+			if(!flagOfFalsePositive)	{
+				falsePositive++;
+				falsePositiveFile << lineOfCheck << endl;
+				flagOfFalsePositive = false;
+				//cout << "False Postive : [" << lineOfCheck << "]" << endl;
+			}
+			
+			if (forCheckURLFile.eof() || existURLFile.eof())
+				break;
+			
+		}
+				
+		forCheckURLFile.close();
+		existURLFile.close();
+		falsePositiveFile.close();
+		cout << count << endl;
 	}
 	
 	return falsePositive;
