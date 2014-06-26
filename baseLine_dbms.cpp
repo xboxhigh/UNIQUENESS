@@ -32,6 +32,7 @@ const string currentDateTime() {
 
 void Usage(char *czAName)	{
 	cerr << czAName << " [OPTIONS] Directories\n";
+	cerr << "\t-o Output file name.\n";
 	cerr << "\t-i Input file name.\n";
 	cerr << "\t-h Current page.\n";
 	exit(1);
@@ -51,12 +52,15 @@ string InsertURLCommand(string _url)	{
 }
 
 int main(int argc, char **argv)	{
-	
+
 	char opt;
-	string inPath = "";
+	string outPath = "", inPath = "";
 	
-	while((opt = getopt(argc, argv, "hi:")) != -1 )	{
+	while((opt = getopt(argc, argv, "hi:o:")) != -1 )	{
 		switch( opt )	{
+			case 'o':
+				outPath = optarg;
+				break;
 			case 'i':
 				inPath = optarg;
 				break;
@@ -73,7 +77,7 @@ int main(int argc, char **argv)	{
 	
 	fstream srcURL, oFile;
 	char buffer[128*1024];
-	clock_t BegTime, EndTime, CostOfTime;			// Initial Clock Variable
+	clock_t BegTime, EndTime;			// Initial Clock Variable
 	
 	srcURL.open(inPath.c_str(), ios::in);
 	oFile.open("DBMS_RECORD", ios::out);
@@ -84,7 +88,7 @@ int main(int argc, char **argv)	{
 		fprintf(stderr, "%s\n", mysql_error(con));
 		exit(1);
 	}
-	if (mysql_real_connect(con, "localhost", "dbms", "dbms", "dbms", 0, NULL, 0) == NULL)	{
+	if (mysql_real_connect(con, "120.126.17.115", "dbms", "dbms", "dbms", 0, NULL, 0) == NULL)	{
 		finish_with_error(con);
 	}
 	
@@ -107,13 +111,12 @@ int main(int argc, char **argv)	{
 	}
 	
 	EndTime = clock();		// Set the begining time
-	CostOfTime = (EndTime - BegTime) / (double)(CLOCKS_PER_SEC);
 	
 	cout << "Finish insert URLs..." << endl;
 	cout << "Overlaping Count : " << overlappingURLCount << endl;
 	
 	oFile << "Number of Overlapping : " << overlappingURLCount << endl;
-	oFile << "Cost of total time : " << CostOfTime << endl;
+	oFile << "Cost of total time : " << ((EndTime - BegTime) / (double)(CLOCKS_PER_SEC)) << endl;
 	
 	srcURL.close();
 	oFile.close();
