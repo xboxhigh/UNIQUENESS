@@ -11,6 +11,8 @@ static string itoa(int _num)	{
 void Usage(char *czAName)	{
 	cerr << czAName << " [OPTIONS] Directories\n";
 	cerr << "\t-o Output file name.\n";
+	cerr << "\t-i Input file name.\n";
+	cerr << "\t-h Current page.\n";
 	exit(1);
 }
 
